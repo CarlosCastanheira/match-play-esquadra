@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grande Torneio da Esquadra das Lágrimas</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            background:#0b3b32;
+            min-height:100vh;
+            padding:8px;
+        }
+        .container{
+            max-width:480px;
+            margin:0 auto;
+            background:#ffffff;
+            border-radius:16px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.35);
+            overflow:hidden;
+        }
+        .header{
+            background:linear-gradient(135deg,#145c52,#0b3b32);
+            color:#fff;
+            padding:16px 14px;
+            text-align:center;
+        }
+        .header h1{
+            font-size:18px;
+            font-weight:700;
+            margin-bottom:4px;
+        }
+        .header h2{
+            font-size:13px;
+            font-weight:500;
+            opacity:0.9;
+        }
+        .header p{
+            font-size:11px;
+            margin-top:4px;
+            opacity:0.8;
+        }
+        .section{
+            padding:10px 12px;
+            border-top:1px solid #e5e5e5;
+        }
+        .section-title{
+            font-size:13px;
+            font-weight:700;
+            color:#145c52;
+            margin-bottom:6px;
+        }
+        .field-group{
+            display:flex;
+            flex-direction:column;
+            margin-bottom:6px;
+        }
+        .field-group label{
+            font-size:11px;
+            color:#555;
+            margin-bottom:2px;
+        }
+        .field-group input{
+            padding:7px 8px;
+            border:1px solid #d0d0d0;
+            border-radius:6px;
+            font-size:13px;
+        }
+        .field-inline{
+            display:flex;
+            gap:6px;
+        }
+        .field-inline .field-group{
+            flex:1;
+        }
+        .score-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:6px;
+        }
+        .hole-card{
+            border:1px solid #e0e0e0;
+            border-radius:8px;
+            padding:6px;
+            font-size:11px;
+            background:#fafafa;
+        }
+        .hole-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:4px;
+        }
+        .hole-number{
+            font-weight:700;
+            color:#145c52;
+        }
+        .hole-meta{
+            font-size:10px;
+            color:#777;
+        }
+        .hole-row{
+            display:flex;
+            align-items:center;
+            margin-bottom:2px;
+        }
+        .hole-row span{
+            width:32px;
+            font-size:10px;
+            color:#555;
+        }
+        .hole-row input{
+            flex:1;
+            padding:4px;
+            border:1px solid #d0d0d0;
+            border-radius:5px;
+            font-size:11px;
+            text-align:center;
+            background:#fff;
+        }
+        .hole-result{
+            margin-top:4px;
+            font-size:10px;
+            text-align:center;
+            padding:2px 4px;
+            border-radius:4px;
+            background:#e9ecef;
+            color:#444;
+        }
+        .hole-result.win-a{background:#d1e7dd;color:#0f5132;}
+        .hole-result.win-b{background:#f8d7da;color:#842029;}
+        .hole-result.halved{background:#cfe2ff;color:#084298;}
+        .summary{
+            text-align:center;
+            padding:8px;
+            background:#ecf7ff;
+            border-radius:10px;
+            margin-top:6px;
+        }
+        .summary-main{
+            font-size:16px;
+            font-weight:700;
+            color:#145c52;
+        }
+        .summary-sub{
+            font-size:11px;
+            color:#555;
+            margin-top:2px;
+        }
+        .actions{
+            display:flex;
+            gap:6px;
+            margin-top:6px;
+        }
+        .btn{
+            flex:1;
+            padding:8px;
+            border:none;
+            border-radius:8px;
+            font-size:12px;
+            font-weight:600;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+            cursor:pointer;
+        }
+        .btn-primary{
+            background:#145c52;
+            color:#fff;
+        }
+        .btn-secondary{
+            background:#6c757d;
+            color:#fff;
+        }
+        @media (max-width:480px){
+            .container{border-radius:0;box-shadow:none;}
+        }
+        @media print{
+            body{background:#fff;padding:0;}
+            .container{box-shadow:none;border-radius:0;}
+            .actions{display:none;}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Grande Torneio da Esquadra das Lágrimas</h1>
+        <h2>Campo Quinta das Lágrimas</h2>
+        <p>Folha de pontuação Match Play – uso em smartphone</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Dados do Match</div>
+        <div class="field-group">
+            <label>Data</label>
+            <input type="date" id="matchDate">
+        </div>
+        <div class="field-inline">
+            <div class="field-group">
+                <label>Jogador A</label>
+                <input type="text" id="playerA" placeholder="Nome Jogador A">
+            </div>
+            <div class="field-group">
+                <label>Hcp A</label>
+                <input type="number" id="hcpA" placeholder="0" step="0.1" min="0" max="54">
+            </div>
+        </div>
+        <div class="field-inline">
+            <div class="field-group">
+                <label>Jogador B</label>
+                <input type="text" id="playerB" placeholder="Nome Jogador B">
+            </div>
+            <div class="field-group">
+                <label>Hcp B</label>
+                <input type="number" id="hcpB" placeholder="0" step="0.1" min="0" max="54">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Buracos (1–18)</div>
+        <div class="score-grid" id="holesContainer"></div>
+
+        <div class="summary">
+            <div class="summary-main" id="matchStatus">All Square</div>
+            <div class="summary-sub" id="matchDetails">Match empatado</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="calculateMatch()">Calcular</button>
+            <button class="btn btn-secondary" onclick="resetCard()">Limpar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SIS  = [7,9,17,11,15,3,5,13,1,8,10,18,12,16,4,6,14,2];
+    const PARS = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3];
+
+    const holesContainer = document.getElementById('holesContainer');
+
+    function createHoleCards(){
+        for(let i=1;i<=18;i++){
+            const card = document.createElement('div');
+            card.className = 'hole-card';
+            card.innerHTML = `
+                <div class="hole-header">
+                    <div class="hole-number">Buraco ${i}</div>
+                    <div class="hole-meta">Par ${PARS[i-1]} · SI ${SIS[i-1]}</div>
+                </div>
+                <div class="hole-row">
+                    <span>A</span>
+                    <input type="number" min="1" max="10" id="a_gross_${i}" inputmode="numeric" placeholder="-">
+                </div>
+                <div class="hole-row">
+                    <span>B</span>
+                    <input type="number" min="1" max="10" id="b_gross_${i}" inputmode="numeric" placeholder="-">
+                </div>
+                <div class="hole-result" id="res_${i}">Sem resultado</div>
+            `;
+            holesContainer.appendChild(card);
+        }
+    }
+
+    function calculateMatch(){
+        const hcpA = parseFloat(document.getElementById('hcpA').value) || 0;
+        const hcpB = parseFloat(document.getElementById('hcpB').value) || 0;
+        const nameA = document.getElementById('playerA').value || 'Jogador A';
+        const nameB = document.getElementById('playerB').value || 'Jogador B';
+
+        let diffHcp = Math.round(Math.abs(hcpA - hcpB));
+        let receiver = null;
+        if(hcpA > hcpB) receiver = 'A';
+        else if(hcpB > hcpA) receiver = 'B';
+
+        let aHoles = 0;
+        let bHoles = 0;
+        let holesPlayed = 0;
+        let matchOver = false;
+        let matchOverHole = 0;
+
+        for(let i=1;i<=18;i++){
+            const aGross = parseInt(document.getElementById(`a_gross_${i}`).value);
+            const bGross = parseInt(document.getElementById(`b_gross_${i}`).value);
+            const resDiv = document.getElementById(`res_${i}`);
+
+            if(isNaN(aGross) || isNaN(bGross)){
+                resDiv.textContent = 'Sem resultado';
+                resDiv.className = 'hole-result';
+                continue;
+            }
+
+            holesPlayed++;
+
+            let aNet = aGross;
+            let bNet = bGross;
+
+            if(receiver === 'A' && diffHcp > 0 && SIS[i-1] <= diffHcp){
+                aNet = aGross - 1;
+            }
+            if(receiver === 'B' && diffHcp > 0 && SIS[i-1] <= diffHcp){
+                bNet = bGross - 1;
+            }
+
+            if(aNet < bNet){
+                aHoles++;
+                resDiv.textContent = 'A vence';
+                resDiv.className = 'hole-result win-a';
+            }else if(bNet < aNet){
+                bHoles++;
+                resDiv.textContent = 'B vence';
+                resDiv.className = 'hole-result win-b';
+            }else{
+                resDiv.textContent = 'Empate';
+                resDiv.className = 'hole-result halved';
+            }
+
+            const diff = aHoles - bHoles;
+            const holesRemaining = 18 - holesPlayed;
+            if(!matchOver && Math.abs(diff) > holesRemaining){
+                matchOver = true;
+                matchOverHole = i;
+            }
+        }
+
+        const status = document.getElementById('matchStatus');
+        const details = document.getElementById('matchDetails');
+
+        if(matchOver){
+            const diff = Math.abs(aHoles - bHoles);
+            const holesRemaining = 18 - matchOverHole;
+            const winner = aHoles > bHoles ? nameA : nameB;
+            status.textContent = `${winner} vence ${diff}&${holesRemaining}`;
+            details.textContent = `Match terminou no buraco ${matchOverHole}`;
+        }else if(holesPlayed === 18){
+            const diff = aHoles - bHoles;
+            if(diff === 0){
+                status.textContent = 'All Square';
+                details.textContent = 'Empate após 18 buracos – requer prolongamento';
+            }else if(diff > 0){
+                status.textContent = `${nameA} vence ${diff} UP`;
+                details.textContent = `${nameA} ganhou por ${diff} buraco(s)`;
+            }else{
+                status.textContent = `${nameB} vence ${Math.abs(diff)} UP`;
+                details.textContent = `${nameB} ganhou por ${Math.abs(diff)} buraco(s)`;
+            }
+        }else{
+            const diff = aHoles - bHoles;
+            if(diff === 0){
+                status.textContent = 'All Square';
+                details.textContent = 'Match empatado';
+            }else if(diff > 0){
+                status.textContent = `${nameA} ${diff} UP`;
+                details.textContent = `${nameA} está a ganhar por ${diff} buraco(s)`;
+            }else{
+                status.textContent = `${nameB} ${Math.abs(diff)} UP`;
+                details.textContent = `${nameB} está a ganhar por ${Math.abs(diff)} buraco(s)`;
+            }
+        }
+    }
+
+    function resetCard(){
+        if(!confirm('Limpar todos os resultados?')) return;
+        for(let i=1;i<=18;i++){
+            document.getElementById(`a_gross_${i}`).value = '';
+            document.getElementById(`b_gross_${i}`).value = '';
+            const resDiv = document.getElementById(`res_${i}`);
+            resDiv.textContent = 'Sem resultado';
+            resDiv.className = 'hole-result';
+        }
+        document.getElementById('matchStatus').textContent = 'All Square';
+        document.getElementById('matchDetails').textContent = 'Match empatado';
+    }
+
+    document.getElementById('matchDate').valueAsDate = new Date();
+    createHoleCards();
+</script>
+</body>
+</html>
