@@ -154,6 +154,31 @@
             gap:6px;
             margin-top:6px;
         }
+        .hcp-table{
+            width:100%;
+            border-collapse:collapse;
+            font-size:12px;
+        }
+        .hcp-table th,.hcp-table td{
+            padding:6px 4px;
+            text-align:center;
+            border:1px solid #e0e0e0;
+        }
+        .hcp-table th{
+            background:#f2f7f6;
+            color:#145c52;
+            font-weight:700;
+        }
+        .hcp-table td:first-child{
+            text-align:left;
+            color:#555;
+            font-weight:600;
+            background:#fafafa;
+        }
+        .hcp-table td.hcp-jogo-value{
+            font-weight:700;
+            color:#145c52;
+        }
         .btn{
             flex:1;
             padding:8px;
@@ -200,23 +225,36 @@
         <div class="field-inline">
             <div class="field-group">
                 <label>Jogador A</label>
-                <input type="text" id="playerA" placeholder="Nome Jogador A">
+                <input type="text" id="playerA" placeholder="Nome Jogador A" oninput="updateHcpJogo()">
             </div>
             <div class="field-group">
                 <label>Hcp A</label>
-                <input type="number" id="hcpA" placeholder="0" step="0.1" min="0" max="54">
+                <input type="number" id="hcpA" placeholder="0" step="0.1" min="0" max="54" oninput="updateHcpJogo()">
             </div>
         </div>
         <div class="field-inline">
             <div class="field-group">
                 <label>Jogador B</label>
-                <input type="text" id="playerB" placeholder="Nome Jogador B">
+                <input type="text" id="playerB" placeholder="Nome Jogador B" oninput="updateHcpJogo()">
             </div>
             <div class="field-group">
                 <label>Hcp B</label>
-                <input type="number" id="hcpB" placeholder="0" step="0.1" min="0" max="54">
+                <input type="number" id="hcpB" placeholder="0" step="0.1" min="0" max="54" oninput="updateHcpJogo()">
             </div>
         </div>
+    </div>
+
+    <div class="section" id="hcpJogoSection" style="display:none">
+        <div class="section-title">HCP de Jogo</div>
+        <table class="hcp-table">
+            <thead>
+                <tr><th></th><th id="hcpTableNameA">Jogador A</th><th id="hcpTableNameB">Jogador B</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>HCP</td><td id="hcpDisplayA">-</td><td id="hcpDisplayB">-</td></tr>
+                <tr><td>HCP de jogo</td><td class="hcp-jogo-value" id="hcpJogoA">-</td><td class="hcp-jogo-value" id="hcpJogoB">-</td></tr>
+            </tbody>
+        </table>
     </div>
 
     <div class="section">
@@ -270,7 +308,7 @@
         const nameA = document.getElementById('playerA').value || 'Jogador A';
         const nameB = document.getElementById('playerB').value || 'Jogador B';
 
-        let diffHcp = Math.round(Math.abs(hcpA - hcpB));
+        let diffHcp = Math.ceil(Math.abs(hcpA - hcpB));
         let receiver = null;
         if(hcpA > hcpB) receiver = 'A';
         else if(hcpB > hcpA) receiver = 'B';
@@ -374,8 +412,44 @@
         document.getElementById('matchDetails').textContent = 'Match empatado';
     }
 
+    function updateHcpJogo(){
+        const hcpAInput = document.getElementById('hcpA').value;
+        const hcpBInput = document.getElementById('hcpB').value;
+        const hcpA = parseFloat(hcpAInput);
+        const hcpB = parseFloat(hcpBInput);
+        const section = document.getElementById('hcpJogoSection');
+
+        if(hcpAInput === '' || hcpBInput === '' || isNaN(hcpA) || isNaN(hcpB)){
+            section.style.display = 'none';
+            return;
+        }
+
+        const nameA = document.getElementById('playerA').value || 'Jogador A';
+        const nameB = document.getElementById('playerB').value || 'Jogador B';
+        document.getElementById('hcpTableNameA').textContent = nameA;
+        document.getElementById('hcpTableNameB').textContent = nameB;
+        document.getElementById('hcpDisplayA').textContent = hcpAInput;
+        document.getElementById('hcpDisplayB').textContent = hcpBInput;
+
+        let jogoA = 0;
+        let jogoB = 0;
+        if(hcpA !== hcpB){
+            const diff = Math.ceil(Math.abs(hcpA - hcpB));
+            if(hcpA < hcpB){
+                jogoB = diff;
+            }else{
+                jogoA = diff;
+            }
+        }
+
+        document.getElementById('hcpJogoA').textContent = jogoA;
+        document.getElementById('hcpJogoB').textContent = jogoB;
+        section.style.display = '';
+    }
+
     document.getElementById('matchDate').valueAsDate = new Date();
     createHoleCards();
+    updateHcpJogo();
 </script>
 </body>
 </html>
