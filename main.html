@@ -308,7 +308,7 @@
         const nameA = document.getElementById('playerA').value || 'Jogador A';
         const nameB = document.getElementById('playerB').value || 'Jogador B';
 
-        let diffHcp = Math.ceil(Math.abs(hcpA - hcpB)) / 2;
+        let diffHcp = Math.ceil(Math.ceil(Math.abs(hcpA - hcpB)) / 2);
         let receiver = null;
         if(hcpA > hcpB) receiver = 'A';
         else if(hcpB > hcpA) receiver = 'B';
@@ -434,7 +434,7 @@
         let jogoA = 0;
         let jogoB = 0;
         if(hcpA !== hcpB){
-            const diff = Math.ceil(Math.abs(hcpA - hcpB)) / 2;
+            const diff = Math.ceil(Math.ceil(Math.abs(hcpA - hcpB)) / 2);
             if(hcpA < hcpB){
                 jogoB = diff;
             }else{
