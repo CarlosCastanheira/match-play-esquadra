@@ -120,6 +120,21 @@
             text-align:center;
             background:#fff;
         }
+        .hole-row.abono{
+            background:#b7e4c7;
+            -webkit-print-color-adjust:exact;
+            print-color-adjust:exact;
+            border-radius:5px;
+            padding:1px 2px;
+        }
+        .hole-row.abono span{
+            color:#0f5132;
+            font-weight:700;
+        }
+        .hole-row.abono input{
+            background:#eafaf0;
+            border-color:#74c69d;
+        }
         .hole-result{
             margin-top:4px;
             font-size:10px;
@@ -288,11 +303,11 @@
                     <div class="hole-number">Buraco ${i}</div>
                     <div class="hole-meta">Par ${PARS[i-1]} · SI ${SIS[i-1]}</div>
                 </div>
-                <div class="hole-row">
+                <div class="hole-row" id="row_a_${i}">
                     <span>A</span>
                     <input type="number" min="1" max="10" id="a_gross_${i}" inputmode="numeric" placeholder="-">
                 </div>
-                <div class="hole-row">
+                <div class="hole-row" id="row_b_${i}">
                     <span>B</span>
                     <input type="number" min="1" max="10" id="b_gross_${i}" inputmode="numeric" placeholder="-">
                 </div>
@@ -410,6 +425,7 @@
         }
         document.getElementById('matchStatus').textContent = 'All Square';
         document.getElementById('matchDetails').textContent = 'Match empatado';
+        updateHcpJogo();
     }
 
     function updateHcpJogo(){
@@ -421,6 +437,7 @@
 
         if(hcpAInput === '' || hcpBInput === '' || isNaN(hcpA) || isNaN(hcpB)){
             section.style.display = 'none';
+            updateAbonos(0, 0);
             return;
         }
 
@@ -445,6 +462,33 @@
         document.getElementById('hcpJogoA').textContent = jogoA;
         document.getElementById('hcpJogoB').textContent = jogoB;
         section.style.display = '';
+
+        updateAbonos(jogoA, jogoB);
+    }
+
+    // Destaca a verde os buracos em que o jogador com maior HCP de jogo
+    // recebe abono. Os buracos sao escolhidos pela ordem de dificuldade (SIS):
+    // com N abonos, recebem pancada os N buracos de menor stroke index.
+    function updateAbonos(jogoA, jogoB){
+        const abonos = Math.max(jogoA, jogoB);
+        let receiver = null;
+        if(abonos > 0){
+            receiver = jogoA > jogoB ? 'a' : 'b';
+        }
+
+        for(let i=1;i<=18;i++){
+            const rowA = document.getElementById(`row_a_${i}`);
+            const rowB = document.getElementById(`row_b_${i}`);
+            if(!rowA || !rowB) continue;
+
+            rowA.classList.remove('abono');
+            rowB.classList.remove('abono');
+
+            if(receiver && SIS[i-1] <= abonos){
+                const row = receiver === 'a' ? rowA : rowB;
+                row.classList.add('abono');
+            }
+        }
     }
 
     document.getElementById('matchDate').valueAsDate = new Date();
