@@ -26,6 +26,109 @@
             color:#fff;
             padding:16px 14px;
             text-align:center;
+            position:relative;
+        }
+        .info-btn{
+            position:absolute;
+            top:8px;
+            right:8px;
+            width:34px;
+            height:34px;
+            border:1px solid rgba(255,255,255,0.35);
+            border-radius:50%;
+            background:rgba(255,255,255,0.12);
+            color:#fff;
+            font-size:17px;
+            line-height:1;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:0;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .info-btn:hover,.info-btn:focus-visible{background:rgba(255,255,255,0.25);outline:none;}
+        .info-overlay{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.55);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:12px;
+            z-index:1000;
+        }
+        .info-overlay.open{display:flex;}
+        .info-panel{
+            background:#fff;
+            width:100%;
+            max-width:440px;
+            max-height:calc(100vh - 24px);
+            max-height:calc(100dvh - 24px);
+            overflow-y:auto;
+            -webkit-overflow-scrolling:touch;
+            border-radius:14px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.35);
+            color:#333;
+            font-size:14px;
+            line-height:1.45;
+        }
+        .info-panel-header{
+            background:linear-gradient(135deg,#145c52,#0b3b32);
+            color:#fff;
+            padding:12px 14px;
+            font-size:16px;
+            font-weight:700;
+            position:sticky;
+            top:0;
+        }
+        .info-panel-body{padding:12px 14px 4px;}
+        .info-panel-body h3{
+            font-size:14px;
+            color:#145c52;
+            margin:10px 0 2px;
+        }
+        .info-panel-body h3:first-child{margin-top:0;}
+        .info-panel-body p{margin:0 0 4px;}
+        .info-warn{
+            background:#fff4e5;
+            border-left:3px solid #f0ad4e;
+            padding:6px 8px;
+            border-radius:4px;
+            margin:6px 0;
+        }
+        .info-important{
+            background:#d1e7dd;
+            border-left:3px solid #198754;
+            padding:6px 8px;
+            border-radius:4px;
+            margin:8px 0;
+        }
+        .info-note{
+            border-left:3px solid #adb5bd;
+            background:#f5f5f5;
+            color:#555;
+            padding:6px 8px;
+            border-radius:4px;
+            margin:8px 0 10px;
+            font-size:13px;
+        }
+        .info-panel-footer{
+            padding:8px 14px 14px;
+            position:sticky;
+            bottom:0;
+            background:#fff;
+        }
+        .info-close{
+            width:100%;
+            padding:10px;
+            border:none;
+            border-radius:8px;
+            background:#145c52;
+            color:#fff;
+            font-size:14px;
+            font-weight:600;
+            cursor:pointer;
         }
         .header h1{
             font-size:18px;
@@ -255,12 +358,14 @@
             .notes{display:block;background:#fff;color:#555;}
             .container{box-shadow:none;border-radius:0;}
             .actions{display:none;}
+            .info-btn,.info-overlay{display:none !important;}
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
+        <button type="button" class="info-btn" id="infoBtn" aria-label="Instruções" title="Instruções" onclick="openInfo()">ℹ️</button>
         <h1>ScoreCard Match Play</h1>
         <h2>Campo Quinta das Lágrimas</h2>
         <p>Folha de pontuação Match Play – uso em smartphone</p>
@@ -332,7 +437,59 @@
     </div>
 </div>
 
+<div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-labelledby="infoTitle" onclick="if(event.target===this) closeInfo()">
+    <div class="info-panel">
+        <div class="info-panel-header" id="infoTitle">ℹ️ Instruções</div>
+        <div class="info-panel-body">
+            <h3>1. Jogadores</h3>
+            <p>Introduza o nome dos dois jogadores.</p>
+
+            <h3>2. HCP de jogo</h3>
+            <p>Selecione o HCP de jogo de cada jogador entre <strong>-10 e 30</strong>.</p>
+            <div class="info-warn">
+                ⚠️ <strong>Atenção ao sinal:</strong><br>
+                Se o HCP de jogo for <strong>+1</strong>, selecione <strong>-1</strong>.<br>
+                <strong>Exemplo: HCP +1 → selecionar -1.</strong>
+            </div>
+
+            <h3>3. HCP de Match</h3>
+            <p>O sistema calcula automaticamente o HCP de Match.</p>
+
+            <h3>4. Abonos</h3>
+            <p>Os abonos são atribuídos automaticamente de acordo com as regras da aplicação.<br>
+            Os buracos onde existem abonos ficam <strong>assinalados a verde</strong>.</p>
+
+            <h3>5. Resultado</h3>
+            <p>Preencha os resultados de cada buraco.</p>
+            <div class="info-important">
+                🟢 <strong>IMPORTANTE:</strong><br>
+                Depois de preencher os resultados, <strong>prima o botão «Calcular»</strong> para obter o resultado do Match Play.
+            </div>
+
+            <div class="info-note">
+                <strong>Nota:</strong> Os resultados devem ser sempre verificados manualmente. A aplicação pode apresentar imprecisões.
+            </div>
+        </div>
+        <div class="info-panel-footer">
+            <button type="button" class="info-close" id="infoClose" onclick="closeInfo()">✕ Fechar</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Painel de instrucoes: apenas mostra/oculta; nao toca em dados nem calculos.
+    function openInfo(){
+        document.getElementById('infoOverlay').classList.add('open');
+        document.getElementById('infoClose').focus({preventScroll:true});
+    }
+    function closeInfo(){
+        document.getElementById('infoOverlay').classList.remove('open');
+        document.getElementById('infoBtn').focus({preventScroll:true});
+    }
+    document.addEventListener('keydown', e => {
+        if(e.key === 'Escape' && document.getElementById('infoOverlay').classList.contains('open')) closeInfo();
+    });
+
     const SIS  = [7,9,17,11,15,3,5,13,1,8,10,18,12,16,4,6,14,2];
     const PARS = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3];
 
